@@ -6,10 +6,10 @@
 (function() {
   'use strict';
 
-  var logContainer = document.getElementById('log');
+  var logContainer;
+  var logBuffer = '';
 
-  logContainer.setAttribute('contenteditable', true);
-  logContainer.setAttribute('spellcheck', false);
+  ready(init);
 
   var originalLog = console.log;
   var originalDebug = console.debug;
@@ -37,7 +37,24 @@
   }
 
   var logAndScroll = function(msg, type) {
-    logContainer.insertAdjacentHTML('beforeend', '<span contenteditable="false" class="crt"><br />&gt;&nbsp;</span><span class="'+type+'">'+msg+'</span>');
-    logContainer.scrollTop = logContainer.scrollHeight;
+    var output = '<span contenteditable="false" class="crt"><br />&gt;&nbsp;</span><span class="'+type+'">'+msg+'</span>';
+
+    if(typeof logContainer !== 'undefined') {
+      logContainer.insertAdjacentHTML('beforeend', output);
+      logContainer.scrollTop = logContainer.scrollHeight;
+    } else {
+      logBuffer += output;
+    }
   }
+
+  function init() {
+    logContainer = document.getElementById('log');
+
+    logContainer.setAttribute('contenteditable', true);
+    logContainer.setAttribute('spellcheck', false);
+
+    logContainer.insertAdjacentHTML('beforeend', logBuffer);
+  }
+
+  function ready(fn) { document.readyState != 'loading'? fn() : document.addEventListener('DOMContentLoaded', fn) };
 })();
