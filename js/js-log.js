@@ -8,6 +8,12 @@
 
   var logContainer;
   var logBuffer = '';
+  var ConsoleTypeEnum = {
+    DEBUG: 'd',
+    LOG: 'l',
+    WARN: 'w',
+    ERROR: 'e'
+  }
 
   ready(init);
 
@@ -17,26 +23,26 @@
   var originalError = console.error;
 
   console.log = function(msg) {
-    logAndScroll(msg, 'l');
+    proxyLogAndScroll(msg, ConsoleTypeEnum.LOG);
     originalLog.apply(this, arguments);
   }
 
   console.debug = function(msg) {
-    logAndScroll(msg, 'd');
+    proxyLogAndScroll(msg, ConsoleTypeEnum.DEBUG);
     originalDebug.apply(this, arguments);
   }
 
   console.warn = function(msg) {
-    logAndScroll(msg, 'w');
+    proxyLogAndScroll(msg, ConsoleTypeEnum.WARN);
     originalWarn.apply(this, arguments);
   }
 
   console.error = function(msg) {
-    logAndScroll(msg, 'e');
+    proxyLogAndScroll(msg, ConsoleTypeEnum.ERROR);
     originalError.apply(this, arguments);
   }
 
-  var logAndScroll = function(msg, type) {
+  var proxyLogAndScroll = function(msg, type) {
     var output = '<span contenteditable="false" class="crt"><br />&gt;&nbsp;</span><span class="'+type+'">'+msg+'</span>';
 
     if(typeof logContainer !== 'undefined') {
